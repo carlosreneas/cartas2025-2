@@ -92,6 +92,17 @@ document.getElementById('registrar').addEventListener('click', function () {
         return;
     }
 
+    // Validar si ya existe una fila con el mismo número
+    const filas = document.querySelectorAll('#listado tr');
+    const numeroExiste = Array.from(filas).some(fila => {
+        return fila.children[0].textContent.trim() === numero;
+    });
+
+    if (numeroExiste) {
+        alert('No seas así, la quieres embarrar');
+        return;
+    }
+
     // Agregar la fila a la tabla
     agregarFila(numero, carta, 0); // El valor "0" es la cantidad por defecto
 
