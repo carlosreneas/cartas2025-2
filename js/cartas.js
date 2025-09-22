@@ -99,3 +99,25 @@ document.getElementById('registrar').addEventListener('click', function () {
     document.getElementById('numero').value = '';
     document.getElementById('carta').value = '';
 });
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Agregar evento de clic a todas las cartas
+    document.querySelectorAll('.btncarta').forEach(carta => {
+        carta.addEventListener('click', () => {
+            const cartaNum = carta.dataset.carta; // Obtener el número de la carta (como string)
+            
+            // Buscar la fila en la tabla que coincida con ese número
+            const filas = document.querySelectorAll('#listado tr');
+            filas.forEach(fila => {
+                const celdaNumero = fila.children[0].textContent.trim();
+                
+                if (celdaNumero === cartaNum) {
+                    const celdaCant = fila.children[2]; // Tercera columna: Cant
+                    let cantidad = parseInt(celdaCant.textContent);
+                    celdaCant.textContent = cantidad + 1;
+                }
+            });
+        });
+    });
+});
