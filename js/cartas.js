@@ -1,6 +1,14 @@
 // Función para cargar los datos desde la URL
 async function cargarDatos() {
     try {
+
+        const datosEnLocal = localStorage.getItem('cartasTabla');
+        if (datosEnLocal) {
+            cargarTablaDesdeLocalStorage();
+            console.log('Datos encontrados en localStorage. No se carga JSON.');
+            return; // Evita cargar desde el JSON si ya hay datos
+        }
+
         // Hacer la solicitud fetch a la URL del JSON
         const response = await fetch('https://carlosreneas.github.io/endpoints/cartas.json');
         
@@ -105,6 +113,7 @@ document.getElementById('registrar').addEventListener('click', function () {
 
     // Agregar la fila a la tabla
     agregarFila(numero, carta, 0); // El valor "0" es la cantidad por defecto
+    guardarTablaEnLocalStorage();
 
     // Limpiar los campos del formulario después de guardar
     document.getElementById('numero').value = '';
@@ -113,6 +122,7 @@ document.getElementById('registrar').addEventListener('click', function () {
 
 
 document.addEventListener('DOMContentLoaded', function () {
+
     // Agregar evento de clic a todas las cartas
     document.querySelectorAll('.btncarta').forEach(carta => {
         carta.addEventListener('click', () => {
@@ -127,8 +137,41 @@ document.addEventListener('DOMContentLoaded', function () {
                     const celdaCant = fila.children[2]; // Tercera columna: Cant
                     let cantidad = parseInt(celdaCant.textContent);
                     celdaCant.textContent = cantidad + 1;
+                    guardarTablaEnLocalStorage();
                 }
             });
         });
     });
 });
+
+
+
+
+
+
+
+// FUNCIONES PARA LA GESTIÓN CON EL LOCALSTORAGE
+
+function guardarTablaEnLocalStorage() {
+    const filas = document.querySelectorAll('#listado tr');
+    const datos = [];
+
+    filas.forEach(fila => {
+        const numero = fila.children[0].textContent.trim();
+        const carta = fila.children[1].textContent.trim();
+        const cantidad = fila.children[2].textContent.trim();
+        datos.push({ numero, carta, valor: cantidad });
+    });
+
+    localStorage.setItem('cartasTabla', JSON.stringify(datos));
+}
+
+function cargarTablaDesdeLocalStorage() {
+    const datosGuardados = localStorage.getItem('cartasTabla');
+    if (datosGuardados) {
+        const cartas = JSON.parse(datosGuardados);
+        cartas.forEach(carta => {
+            agregarFila(carta.numero, carta.carta, carta.valor);
+        });
+    }
+}
